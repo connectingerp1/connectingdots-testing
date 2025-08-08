@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState, useCallback, memo, useRef } from "react";
 import { Carousel, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import styles from "@/styles/HomePage/HeaderCarousel.module.css";
+import dynamic from "next/dynamic";
 import Btnform from "./Btnform";
 import Image from "next/image";
 import Link from "next/link";
+import CareerMentorsComponent from "./CarouselLogo";
+import QuizCompo from "./Carouselquiz";
 
-// Dynamic import for LogoSphere
-import dynamic from "next/dynamic";
+// Dynamically import TechStackCarousel with no SSR
+const TechStackCarousel = dynamic(
+  () => import('./Carouselcareer'),
+  { ssr: false, loading: () => <div>Loading tech stack...</div> }
+);
+
+// Dynamic import for LogoSphere - Only for desktop
 const LogoSphere = dynamic(() => import("./LogoSphere"), {
   ssr: false,
   loading: () => (
@@ -49,27 +56,15 @@ const IMAGES = [
   "/Headercarousel/DGM.avif",
 ];
 
-const QUESTION_DATA = {
-  Q1: {
-    title:
-      "What is the function of an <span class='text-primary font-bold'>HR Payroll</span> system?",
-    text: "The function of an <span class='text-primary font-bold'>HR payroll system</span> is to automate and manage employee compensation processes, including calculating wages, withholding taxes, and ensuring compliance with labor laws. It streamlines payroll operations, reduces errors, and provides accurate and timely payments to employees.",
-  },
-  Q2: {
-    title:
-      "What is the purpose of the <span class='text-primary font-bold'>CO</span> module in <span class='text-primary font-bold'>SAP FICO</span>?",
-    text: "The <span class='text-primary font-bold'>CO (Controlling)</span> module in <span class='text-primary font-bold'>SAP FICO</span> helps manage and monitor internal costs. It supports internal reporting by tracking and analyzing costs and revenues, aiding in budgeting, planning, and controlling operations to ensure effective cost management within an organization.",
-  },
-  Q3: {
-    title:
-      "What is the role of <span class='text-primary font-bold'>Express.js</span> in the <span class='text-primary font-bold'>MERN</span> stack?",
-    text: "<span class='text-primary font-bold'>Express.js</span> is a lightweight web application framework for Node.js, used in the <span class='text-primary font-bold'>MERN</span> stack. It simplifies the development of server-side applications by providing robust features for web and mobile applications, such as routing, middleware integration, and handling HTTP requests and responses.",
-  },
-};
-
 // Memoized company logo component - OPTIMIZED FOR LCP
 const CompanyLogos = memo(() => (
-  <div className={styles.logoStrip}>
+  <div style={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '20px',
+    width: '100%'
+  }}>
     <Image
       src="/Headercarousel/logo strip.avif"
       alt="Partner companies logos including IBM, TCS, and other corporate partners"
@@ -88,82 +83,192 @@ const CompanyLogos = memo(() => (
 
 CompanyLogos.displayName = "CompanyLogos";
 
-// Split into smaller components to reduce nesting
+// CareerSlide with proper background and mobile responsiveness
 const CareerSlide = memo(({ onButtonClick }) => (
-  <div className={styles.carouselSlide}>
-    <div className={styles.carouselText}>
-      <h1>
-        Unlock your <span className={styles.highlight}>Career</span> potential
-      </h1>
-      <h2>
-        <span className={styles.highlight}>No.1 Training &</span> Placement
-        Center
-      </h2>
-      <p>
-        For more than 10 years, we've been passionate about providing engaging,
-        instructor-led training that helps professionals around the world grow
-        and succeed.
-      </p>
-      <p>
-        Est. 2013 Trusted by <span className={styles.highlight}>5000+</span>{" "}
-        Students
-      </p>
-      <Button
-        className={`${styles.customBtn} ${styles.btn3}`}
-        onClick={onButtonClick}
-      >
-        <span>Free Consultation</span>
-      </Button>
-      <CompanyLogos />
-    </div>
-    <div className={styles.carouselImage}>
-      {/* Updated container with intensified shadow */}
-      <div className="relative w-42 sm:w-60 md:w-80 lg:w-96 aspect-square">
-        {/* Primary 50% less intense shadow */}
-        <div
-          className="absolute"
+  <div 
+    className="career-slide" 
+    style={{
+      minHeight: '600px',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      padding: '40px',
+      gap: '40px',
+      backgroundImage: 'url(https://res.cloudinary.com/decptkmx7/image/upload/v1752908067/wmremove-transformed_5_lae7mr.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'relative'
+    }}
+  >
+    {/* Content container */}
+    <div className="career-content" style={{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      height: '100%',
+      gap: '40px',
+      zIndex: 1
+    }}>
+      {/* Left content */}
+      <div className="career-text" style={{
+        flex: '1',
+        maxWidth: '55%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        color: '#333'
+      }}>
+        <h1 style={{
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          fontWeight: 'bold',
+          lineHeight: '1.2',
+          margin: '0',
+          color: '#333',
+          textShadow: '2px 2px 4px rgba(255,255,255,0.8)'
+        }}>
+          Unlock your <span style={{ color: '#007bff' }}>Career</span> potential
+        </h1>
+        
+        <h2 style={{
+          fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+          fontWeight: '600',
+          margin: '0',
+          lineHeight: '1.3',
+          color: '#333',
+          textShadow: '1px 1px 2px rgba(255,255,255,0.8)'
+        }}>
+          <span style={{ color: '#007bff' }}>No.1 Training &</span> Placement Center
+        </h2>
+        
+        <p style={{
+          fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+          lineHeight: '1.6',
+          color: '#555',
+          margin: '0',
+          maxWidth: '95%',
+          textShadow: '1px 1px 2px rgba(255,255,255,0.6)'
+        }}>
+          For more than 10 years, we've been passionate about providing engaging,
+          instructor-led training that helps professionals around the world grow
+          and succeed.
+        </p>
+        
+        <p style={{
+          fontSize: 'clamp(0.95rem, 2.2vw, 1.1rem)',
+          color: '#555',
+          margin: '0',
+          fontWeight: '500',
+          textShadow: '1px 1px 2px rgba(255,255,255,0.6)'
+        }}>
+          Est. 2013 Trusted by <span style={{ color: '#007bff', fontWeight: 'bold' }}>5000+</span>{" "}
+          Students
+        </p>
+        
+        <Button
+          className="free-consultation-btn"
           style={{
-            bottom: "-25px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "90%",
-            height: "50px",
-            background:
-              "radial-gradient(ellipse, rgba(0, 0, 0, 0.245) 0%, rgba(0, 0, 0, 0.14) 30%, rgba(0, 0, 0, 0.07) 60%, transparent 80%)",
-            filter: "blur(25px)",
-            zIndex: 0,
+            background: 'linear-gradient(135deg, #007bff, #0056b3)',
+            border: 'none',
+            borderRadius: '30px',
+            padding: 'clamp(12px, 2.5vw, 15px) clamp(25px, 5vw, 35px)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)',
+            fontWeight: '600',
+            color: 'white',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 6px 20px rgba(0, 123, 255, 0.4)',
+            alignSelf: 'flex-start',
+            whiteSpace: 'nowrap',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}
-        />
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'translateY(-3px)';
+            e.target.style.boxShadow = '0 8px 25px rgba(0, 123, 255, 0.5)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 6px 20px rgba(0, 123, 255, 0.4)';
+          }}
+          onClick={onButtonClick}
+        >
+          Free Consultation
+        </Button>
+        
+        {/* Company logos - hidden on mobile */}
+        <div className="company-logos-desktop" style={{
+          display: 'block'
+        }}>
+          <CompanyLogos />
+        </div>
+      </div>
 
-        {/* Secondary 50% less intense shadow */}
-        <div
-          className="absolute"
-          style={{
-            bottom: "-15px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "65%",
-            height: "30px",
-            background:
-              "radial-gradient(ellipse, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.15) 50%, transparent 70%)",
-            filter: "blur(12px)",
-            zIndex: 0,
-          }}
-        />
+      {/* Right content - LogoSphere (hidden on mobile) */}
+      <div className="career-image-desktop" style={{
+        flex: '1',
+        maxWidth: '45%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative'
+      }}>
+        {/* Updated container with responsive sizing */}
+        <div style={{
+          position: 'relative',
+          width: 'clamp(250px, 35vw, 400px)',
+          height: 'clamp(250px, 35vw, 400px)',
+          aspectRatio: '1'
+        }}>
+          {/* Primary shadow */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: "-25px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "90%",
+              height: "50px",
+              background:
+                "radial-gradient(ellipse, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.15) 30%, rgba(0, 0, 0, 0.08) 60%, transparent 80%)",
+              filter: "blur(25px)",
+              zIndex: 0,
+            }}
+          />
 
-        <Image
-          src="/Navbar/3d-logo.avif"
-          alt="Hero Section Image"
-          fill
-          className="object-contain relative"
-          style={{
-            // filter:
-            //   "drop-shadow(0 25px 50px rgba(0, 0, 0, 0.15)) drop-shadow(0 12px 30px rgba(0, 0, 0, 0.1))",
-            zIndex: 1,
-          }}
-          loading="lazy" // Changed from priority to lazy
-          sizes="(max-width: 768px) 100vw, 400px"
-        />
+          {/* Secondary shadow */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: "-15px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "65%",
+              height: "30px",
+              background:
+                "radial-gradient(ellipse, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.15) 50%, transparent 70%)",
+              filter: "blur(12px)",
+              zIndex: 0,
+            }}
+          />
+
+          <Image
+            src="/Navbar/3d-logo.avif"
+            alt="3D Logo Animation"
+            fill
+            style={{
+              objectFit: 'contain',
+              zIndex: 1,
+            }}
+            loading="lazy"
+            sizes="(max-width: 768px) 0px, (max-width: 1024px) 35vw, 400px"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -171,193 +276,64 @@ const CareerSlide = memo(({ onButtonClick }) => (
 
 CareerSlide.displayName = "CareerSlide";
 
-const AISlide = memo(({ index, onClick }) => (
-  <div className={styles.carouselSlide2}>
-    <div className={styles.carouselText2}>
-      <h2>
-        All Our <span className={styles.highlight}>Top Programs</span> Include{" "}
-        <br />
-        <span className={styles.highlight}>Generative AI </span>
-        Components
-      </h2>
-      <h3>
-        Be a Leader in your field <br />
-        <span className={styles.highlight}>Change, Adapt, and Build</span> with
-        AI.
-      </h3>
-      <div className={styles.expPgBtn}>
-        <Button
-          className={styles.slide2Btn}
-          onClick={onClick}
-          aria-label="View top training programs"
-        >
-          <span>Explore Our Top Programs</span>
-        </Button>
-      </div>
-    </div>
-    <div className={styles.cardBox2}>
-      <div className={styles.cardH2}>
-        <Image
-          className={styles.transitionImage}
-          src={IMAGES[index]}
-          alt={`Training in ${TEXTS[index].split("with ")[1] || "Professional Skills"}`}
-          width={500}
-          height={400}
-          loading="lazy" // Changed from priority to lazy
-          sizes="(max-width: 768px) 100vw, 500px"
-        />
-      </div>
-    </div>
+// AI Slide with proper carousel control props
+const AISlide = memo(({ isActive, carouselIndex, onSlideChange }) => (
+  <div 
+    style={{ 
+      position: 'relative',
+      width: '100%',
+      minHeight: '600px',
+      height: 'auto',
+      background: 'transparent',
+      backgroundColor: 'transparent',
+    }}
+  >
+    <TechStackCarousel 
+      isParentActive={isActive}
+      parentCarouselIndex={carouselIndex}
+      onParentSlideChange={onSlideChange}
+    />
   </div>
 ));
 
 AISlide.displayName = "AISlide";
 
+// Experts Slide
 const ExpertsSlide = memo(() => (
-  <div className={styles.carouselSlide3}>
-    <div className={styles.leftSideH3}>
-      <h2>
-        Secure your <span className={styles.highlight}>Dream Career</span> with{" "}
-        <span className="font-bold">Live Classes</span> From Industry Experts.
-      </h2>
-      <h3>
-        Our <span className={styles.highlight}>Mentors</span> Come From Top{" "}
-        <span className={styles.highlight}>MNCs</span>
-      </h3>
-      <div className="d-flex items-center">
-        <Image
-          src="/Headercarousel/assurance.avif"
-          alt="Placement assurance badge"
-          className={styles.assuredPlacementImage}
-          width={80}
-          height={80}
-          loading="lazy" // Changed from priority to lazy
-          sizes="80px"
-        />
-        <h3>Assured Placement Opportunity*</h3>
-      </div>
-    </div>
-    <div className={styles.cardBox3}>
-      <div className={styles.cardH3}>
-        <h3>Our Mentors Come From</h3>
-        <div className={styles.content3}>
-          <div className={styles.imageGrid}>
-            {[
-              {
-                src: "/Headercarousel/ibm1.avif",
-                name: "IBM",
-                className: styles.gridImageIbm,
-              },
-              {
-                src: "/Headercarousel/tcs1.avif",
-                name: "TCS",
-                className: styles.gridImageTcs,
-              },
-              {
-                src: "/Headercarousel/LnT.avif",
-                name: "L&T",
-                className: styles.gridImageLnt,
-              },
-              {
-                src: "/Headercarousel/amdocs1.avif",
-                name: "Amdocs",
-                className: styles.gridImageAmd,
-              },
-              {
-                src: "/Headercarousel/infosys2.avif",
-                name: "Infosys",
-                className: styles.gridImageInfo,
-              },
-              {
-                src: "/Headercarousel/wipro.avif",
-                name: "Wipro",
-                className: styles.gridImageWip,
-              },
-              {
-                src: "/Headercarousel/deloitte.avif",
-                name: "Deloitte",
-                className: styles.gridImageDel,
-              },
-              {
-                src: "/Headercarousel/accenture1.avif",
-                name: "Accenture",
-                className: styles.gridImageAcc,
-              },
-              {
-                src: "/Headercarousel/BMW.avif",
-                name: "BMW",
-                className: styles.gridImageBmw,
-              },
-              {
-                src: "/Headercarousel/cognizant1.avif",
-                name: "Cognizant",
-                className: styles.gridImageCog,
-              },
-              {
-                src: "/Headercarousel/Cisco.avif",
-                name: "Cisco",
-                className: styles.gridImageCis,
-              },
-              {
-                src: "/Headercarousel/TechM.avif",
-                name: "Tech Mahindra",
-                className: styles.gridImageTec,
-              },
-            ].map((company, idx) => (
-              <Image
-                key={idx}
-                src={company.src}
-                alt={`${company.name} logo - our mentors come from here`}
-                className={company.className}
-                width={80}
-                height={40}
-                loading={idx < 6 ? "eager" : "lazy"} // First 6 eager, rest lazy
-                sizes="80px"
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+  <div 
+    style={{ 
+      position: 'relative',
+      width: '100%',
+      minHeight: '600px',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      background: 'transparent',
+      backgroundColor: 'transparent',
+    }}
+  >
+    <CareerMentorsComponent />
   </div>
 ));
 
 ExpertsSlide.displayName = "ExpertsSlide";
 
-const QuizSlide = memo(({ question, setQuestion }) => (
-  <div className={styles.carouselSlide4}>
-    <div className={styles.leftSideH}>
-      <h2 dangerouslySetInnerHTML={{ __html: question.title }}></h2>
-      <p dangerouslySetInnerHTML={{ __html: question.text }}></p>
-      <div className={styles.quizOptions}>
-        {["Q1", "Q2", "Q3"].map((qKey) => (
-          <div key={qKey} className={styles.quizOption}>
-            <button
-              className={styles.circularButton}
-              onMouseEnter={() => setQuestion(QUESTION_DATA[qKey])}
-              onClick={() => setQuestion(QUESTION_DATA[qKey])}
-              aria-label={`Show question ${qKey}`}
-            >
-              {qKey}
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className={styles.rightSideH}>
-      <Image
-        src="/Headercarousel/quizbg.avif"
-        alt="Interactive quiz on IT and SAP topics"
-        width={500}
-        height={400}
-        className="plants-image"
-        loading="lazy"
-        sizes="(max-width: 768px) 100vw, 500px"
-      />
-      <Link href="/quiz" className={styles.goButton}>
-        <span>Quiz→</span>
-      </Link>
-    </div>
+// Quiz Slide
+const QuizSlide = memo(() => (
+  <div 
+    style={{ 
+      minHeight: '600px', 
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      background: 'transparent', 
+      backgroundColor: 'transparent',
+      width: '100%'
+    }}
+  >
+    <QuizCompo />
   </div>
 ));
 
@@ -368,10 +344,11 @@ const HeaderCarousel = () => {
   const [index, setIndex] = useState(0);
   const [textVisible, setTextVisible] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [question, setQuestion] = useState({
-    title: "Welcome to the <span class='text-primary font-bold'>Quiz!</span>",
-    text: "Hover over or click a question button to see the question here.",
-  });
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const carouselRef = useRef(null);
+  
+  // Track if the tech stack slide is active
+  const isTechStackActive = carouselIndex === 1;
 
   // Optimized resize handler with debouncing
   useEffect(() => {
@@ -418,33 +395,243 @@ const HeaderCarousel = () => {
 
   const handleButtonClick = useCallback(() => setShowForm(true), []);
   const handleCloseForm = useCallback(() => setShowForm(false), []);
+  
+  // Controlled carousel handlers with debounce
+  const handleCarouselSelect = useCallback((selectedIndex) => {
+    // Only update if the index actually changes
+    if (selectedIndex !== carouselIndex) {
+      setCarouselIndex(selectedIndex);
+    }
+  }, [carouselIndex]);
+  
+  // Handle keyboard navigation for accessibility - always active
+  const handleKeyDown = useCallback((e) => {
+    const totalSlides = 4; // Always 4 slides now
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prevIndex = (carouselIndex - 1 + totalSlides) % totalSlides;
+      setCarouselIndex(prevIndex);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextIndex = (carouselIndex + 1) % totalSlides;
+      setCarouselIndex(nextIndex);
+    }
+  }, [carouselIndex]);
+  
+  // Add keyboard event listener
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, { capture: true });
+    };
+  }, [handleKeyDown]);
+
+  // Handle manual slide change
+  const handleManualSlideChange = useCallback((direction) => {
+    if (direction === 'next') {
+      carouselRef.current.next();
+    } else {
+      carouselRef.current.prev();
+    }
+  }, []);
 
   return (
     <section
       aria-label="Featured Programs and Training Information"
-      className={styles.carouselWrapper}
+      style={{
+        width: '100%',
+        minHeight: '600px',
+        position: 'relative'
+      }}
     >
-      <Carousel className={styles.carousel} indicators={true} controls={true}>
+      {/* Inline styles for responsive design */}
+      <style jsx>{`
+        /* Global carousel styles */
+        :global(.carousel-control-prev),
+        :global(.carousel-control-next),
+        :global(.carousel-indicators) {
+          z-index: 9999 !important;
+          pointer-events: auto !important;
+        }
+        :global(.carousel-control-prev-icon),
+        :global(.carousel-control-next-icon) {
+          pointer-events: auto !important;
+        }
+        :global(.carousel-indicators li) {
+          pointer-events: auto !important;
+        }
+        :global(.carousel-item) {
+          min-height: 600px !important;
+          height: auto !important;
+          background: transparent !important;
+          background-color: transparent !important;
+          transition: none !important;
+        }
+        :global(.carousel-item.active) {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+        :global(.carousel-item-next),
+        :global(.carousel-item-prev),
+        :global(.carousel-item-left),
+        :global(.carousel-item-right) {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+        :global(.carousel-inner) {
+          background: transparent !important;
+          background-color: transparent !important;
+          min-height: 600px !important;
+          overflow: visible !important;
+        }
+        :global(.carousel) {
+          background: transparent !important;
+          background-color: transparent !important;
+          min-height: 600px !important;
+        }
+        :global(.carousel-fade .carousel-item) {
+          opacity: 1 !important;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+          .career-slide {
+            padding: 20px 15px !important;
+            gap: 20px !important;
+            min-height: 500px !important;
+          }
+          
+          .career-content {
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 25px !important;
+          }
+          
+          .career-text {
+            max-width: 100% !important;
+            order: 1;
+            align-items: center !important;
+            text-align: center !important;
+          }
+          
+          .career-image-desktop {
+            display: none !important;
+          }
+          
+          .company-logos-desktop {
+            display: none !important;
+          }
+          
+          .free-consultation-btn {
+            align-self: center !important;
+            margin-top: 10px !important;
+          }
+        }
+        
+        /* Tablet responsive styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .career-slide {
+            padding: 30px 20px !important;
+            gap: 30px !important;
+          }
+          
+          .career-text {
+            max-width: 60% !important;
+          }
+          
+          .career-image-desktop {
+            max-width: 40% !important;
+          }
+        }
+        
+        /* Small mobile screens */
+        @media (max-width: 480px) {
+          .career-slide {
+            padding: 15px 10px !important;
+            gap: 15px !important;
+            min-height: 450px !important;
+          }
+          
+          .career-content {
+            gap: 20px !important;
+          }
+        }
+        
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+          .career-slide {
+            min-height: 400px !important;
+            padding: 15px !important;
+          }
+          
+          .career-content {
+            gap: 15px !important;
+          }
+        }
+      `}</style>
+
+      <Carousel 
+        ref={carouselRef}
+        indicators={true} 
+        controls={true}
+        activeIndex={carouselIndex}
+        onSelect={handleCarouselSelect}
+        touch={true}
+        keyboard={false} // Disable built-in keyboard to use our custom handler
+        pause='hover'
+        interval={5000}
+        fade={false} // Disable fade to prevent opacity issues
+        style={{ 
+          position: 'relative',
+          zIndex: 10,
+          background: 'transparent',
+          backgroundColor: 'transparent',
+          minHeight: '600px'
+        }}
+      >
         {/* First Slide - Career Potential */}
-        <Carousel.Item>
+        <Carousel.Item 
+          className="flex items-center justify-center h-[600px]" 
+          style={{ 
+            background: 'transparent',
+            backgroundColor: 'transparent'
+          }}
+        >
           <CareerSlide onButtonClick={handleButtonClick} />
         </Carousel.Item>
 
-        {/* Second Slide - AI Programs */}
-        <Carousel.Item>
-          <AISlide index={index} onClick={scrollToPopCourses} />
+        {/* Second Slide - Tech Stack */}
+        <Carousel.Item style={{ 
+          background: 'transparent', 
+          backgroundColor: 'transparent',
+          minHeight: '600px',
+          height: 'auto'
+        }}>
+          <AISlide 
+            isActive={isTechStackActive}
+            carouselIndex={carouselIndex}
+            onSlideChange={handleCarouselSelect}
+          />
         </Carousel.Item>
 
-        {/* Third Slide (Only for Desktop View) - Industry Experts */}
-        {!isMobileView && (
-          <Carousel.Item>
-            <ExpertsSlide />
-          </Carousel.Item>
-        )}
+        {/* Third Slide - Industry Experts */}
+        <Carousel.Item style={{ 
+          background: 'transparent', 
+          backgroundColor: 'transparent',
+          minHeight: '600px',
+          height: 'auto'
+        }}>
+          <ExpertsSlide />
+        </Carousel.Item>
 
         {/* Fourth Slide - Quiz */}
-        <Carousel.Item>
-          <QuizSlide question={question} setQuestion={setQuestion} />
+        <Carousel.Item style={{ 
+          background: 'transparent', 
+          backgroundColor: 'transparent',
+          minHeight: '600px',
+          height: 'auto'
+        }}>
+          <QuizSlide />
         </Carousel.Item>
       </Carousel>
 
